@@ -119,6 +119,4 @@ Target_variables = ['SMA_ratio','ATR_5','ATR_15','ATR_Ratio',
                       'RSI_5','RSI_15','RSI_ratio','MACD']
 for variable in Target_variables:
     all_data.loc[:,variable] = mstats.winsorize(all_data.loc[:,variable], limits = [0.1,0.1])
-'''
-test.py
-5 KB
+```
