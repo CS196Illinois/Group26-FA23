@@ -89,6 +89,7 @@ def Wilder(data, periods):
     wilder[start+periods-1] = data[start:(start+periods)].mean() #Simple Moving Average
     for i in range(start+periods,len(data)):
         wilder[i] = (wilder[i-1]*(periods-1) + data[i])/periods #Wilder Smoothing
+
     return(wilder)
 
 #"Average True Range" Technical Indicator
@@ -105,7 +106,7 @@ all_data['ATR_Ratio'] = all_data['ATR_5'] / all_data['ATR_15']
 
 
 #why doesn't this print??????????
-print(all_data['TR'])
+
 
 #"Average Directional Index (ADX)" Technical Indicator
 all_data['prev_high'] = all_data.groupby('symbol')['High'].shift(1)
@@ -144,6 +145,7 @@ for i in all_data['symbol'].unique():
     all_data.loc[all_data.symbol==i,'ADX_5'] = Wilder(ADX_data['DX_5'], 5)
     all_data.loc[all_data.symbol==i,'ADX_15'] = Wilder(ADX_data['DX_15'], 15)
 
+all_data.to_csv('out.csv')
 '''
 sns.set()
 
@@ -184,42 +186,3 @@ Target_variables = ['SMA_ratio','ATR_5','ATR_15','ATR_Ratio',
 for variable in Target_variables:
     all_data.loc[:,variable] = mstats.winsorize(all_data.loc[:,variable], limits = [0.1,0.1])
 '''
-sns.set()
-
-
-
-#Obtain list of S&100 companies from wikipedia
-resp = requests.get("https://en.wikipedia.org/wiki/S%26P_100")
-convert_soup = bs.BeautifulSoup(resp.text, 'lxml')
-table = convert_soup.find('table',{'class':'wikitable sortable'})
-
-tickers = []
-
-for rows in table.findAll('tr')[1:]:
-    ticker = rows.findAll('td')[0].text.strip()
-    tickers.append(ticker)
-
-all_data = pd.DataFrame()
-test_data = pd.DataFrame()
-no_data = []
-
-#Extract data from Yahoo Finance
-for i in tickers:
-    try:
-        print(i)
-        test_data = pdr.get_data_yahoo(i, start = dt.datetime(1990,1,1), end = dt.date.today())
-        test_data['symbol'] = i
-        all_data = all_data.append(test_data)
-        clear_output(wait = True)
-    except:
-        no_data.append(i)
-
-    clear_output(wait = True)
-
-
-Target_variables = ['SMA_ratio','ATR_5','ATR_15','ATR_Ratio',
-                       'ADX_5','ADX_15','SMA_Volume_Ratio','Stochastic_5','Stochastic_15','Stochastic_Ratio',
-                      'RSI_5','RSI_15','RSI_ratio','MACD']
-for variable in Target_variables:
-    all_data.loc[:,variable] = mstats.winsorize(all_data.loc[:,variable], limits = [0.1,0.1])
-```
