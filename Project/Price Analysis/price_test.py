@@ -146,6 +146,19 @@ for i in all_data['symbol'].unique():
     all_data.loc[all_data.symbol==i,'ADX_15'] = Wilder(ADX_data['DX_15'], 15)
 
 all_data.to_csv('out.csv')
+
+#populate the "Outcome" column on a dataframe
+all_data['outcome'] = ''
+
+#outcome has to have the same length as all other 
+outcome = ['N/A']
+#close is the 4th column in the all_data dataframe
+for i in range(1, len(all_data[all_data.columns[[3]]])):
+    if all_data.iloc[i, 3] - all_data.iloc[i-1, 3] >= 0:
+        outcome.append('B')
+    else:
+        outcome.append('S')
+all_data['outcome'] = outcome
 '''
 sns.set()
 
