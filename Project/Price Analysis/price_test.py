@@ -51,7 +51,7 @@ all_data['SMA_5'] = all_data.groupby('symbol')['Close'].transform(lambda x: x.ro
 all_data['SMA_15'] = all_data.groupby('symbol')['Close'].transform(lambda x: x.rolling(window = 15).mean())
 
 #takes the ratio of the 15-day average to the 5-day average (if ratio < 1, that means that the stock is above average recently (you should sell soon since you already have a profit)
-
+all_data['Outcome'] = np.where(all_data['Close'] > all_data['Close'].shift(1), 'B', 'S')
 all_data['SMA_ratio'] = all_data['SMA_15'] / all_data['SMA_5']
 
 #creates excell spreadsheet representation of the data
