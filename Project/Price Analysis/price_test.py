@@ -19,7 +19,7 @@ import yfinance as yf
 
 #extracting data from Yahoo Finance API
 #ticker = company identifier
-tickers = ['AAPL','NFLX']
+tickers = ['GOOG']
 
 #Data Frame = basically 2d array with column and row identifiers
 
