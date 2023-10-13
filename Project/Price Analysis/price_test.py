@@ -32,7 +32,7 @@ yf.pdr_override()
 for i in tickers:
     #make API call using get_data_yahoo
     
-    test_data = pdr.get_data_yahoo(i, start = dt.datetime(2019,1,1), end = dt.datetime(2019,1,30))
+    test_data = pdr.get_data_yahoo(i, start = dt.datetime(2019,1,1), end = dt.datetime(2019,3,30))
     #adding another column to differentiate the tickers
     
     test_data['symbol'] = i
