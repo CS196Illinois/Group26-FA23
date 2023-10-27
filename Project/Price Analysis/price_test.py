@@ -54,7 +54,11 @@ all_data['SMA_15'] = all_data.groupby('symbol')['Close'].transform(lambda x: x.r
 #(you should sell soon since you already have a profit)
 all_data['Outcome'] = np.where(all_data['Close'] > all_data['Close'].shift(1), 'B', 'S')
 all_data['SMA_ratio'] = all_data['SMA_15'] / all_data['SMA_5']
-
+all_data['15MA'] = all_data.groupby('symbol')['Close'].transform(lambda x: x.rolling(window=15).mean())
+all_data['SD'] = all_data.groupby('symbol')['Close'].transform(lambda x: x.rolling(window=15).std())
+all_data['upperband'] = all_data['15MA'] + 2*all_data['SD']
+all_data['lowerband'] = all_data['15MA'] - 2*all_data['SD']
+all_data['RC'] = all_data.groupby('symbol')['Close'].transform(lambda x: x.pct_change(periods = 15))
 #creates excell spreadsheet representation of the data
 all_data.to_csv('all_data.csv')
 
@@ -79,7 +83,22 @@ ax1 = plt.subplot2grid((6,4), (5,0), rowspan=1, colspan=4, sharex = ax0)
 ax1.plot(all_data[all_data.symbol=='GOOG'].loc[start:end,['SMA_ratio']], color = 'blue')
 ax1.legend(['SMA_Ratio'],ncol=3, loc = 'upper left', fontsize = 12)
 ax1.set_facecolor('silver')
+ax1 = plt.subplot2grid((6, 4), (5, 0), rowspan=1, colspan=4, sharex = ax0)
+ax1.plot(all_data[all_data.symbol == 'GOOG'].loc[start:end, 'RC'], color = 'green')
+ax1.legend(['Rate of Change (RC)'], ncol=3, loc = 'upper left', fontsize = 12)
+ax1.set_facecolor('silver')
 plt.subplots_adjust(left=.09, bottom=.09, right=1, top=.95, wspace=.20, hspace=0)
+
+plt.subplots_adjust(left=.09, bottom=.09, right=1, top=.95, wspace=.20, hspace=0)
+ax0 = plt.subplot2grid((8,4), (1,0), rowspan=4, colspan=4)
+ax0.plot(all_data[all_data.symbol=='GOOG'].loc[start:end,['Close','SMA_5','SMA_15']])
+ax0.plot(all_data[all_data.symbol=='GOOG'].loc[start:end,'upperband'], linestyle='--', color='grey', label='Upper Bollinger Band')
+ax0.plot(all_data[all_data.symbol=='GOOG'].loc[start:end,'lowerband'], linestyle='--', color='grey', label='Lower Bollinger Band')
+ax0.fill_between(all_data[all_data.symbol=='GOOG'].index, all_data[all_data.symbol=='GOOG']['lowerband'], all_data[all_data.symbol=='GOOG']['upperband'], color='grey', alpha=0.1)
+ax0.set_facecolor('ghostwhite')
+ax0.legend(loc = 'upper left', fontsize = 15)
+ax0.set_title("Google Stock Price, Slow and Fast Moving Average with Bollinger Bands", fontsize = 20)
+
 plt.show()
 
 
@@ -160,6 +179,8 @@ for i in range(1, len(all_data[all_data.columns[[3]]])):
     else:
         outcome.append('S')
 all_data['outcome'] = outcome
+
+all_data.to_csv('outs.csv')
 '''
 sns.set()
 
